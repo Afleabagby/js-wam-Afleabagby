@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin:0;
+        }
+        html,
+        body
+        {
+            background:url('Above\ Clouds.png');
+            color:rgba(10, 10, 10, 0.93);
+            font-family:'微軟正黑體' bolder;
+            font-size:1rem;
+        }
+     
+       
+        #left{
+            width:25%;
+            height:40%;
+            border-radius:25%;
+            float:left;
+            left:10%;
+            position:relative;
+        } 
+        .box{
+            cursor: url('./milk-bottle.png') , auto;
+            border:solid 5px rgba(10, 10, 10, 0.938);
+            border-radius:5%;
+            float:right;
+            right:10%;
+            width:700px;
+            height:430px;
+            background:url('bg2.jpg') no-repeat center center/cover;
+            position:relative;
+            
+        }
+        #game{
+            position:absolute;
+            left:25%;
+            bottom:15%;
+            }
+
+        #game td{
+            height:75px;
+            width:75px;
+        }
+
+        .girlcry{
+            background:url('crying.png')center center/cover;
+        }
+        .boycry{
+            background:url('crying2.png')center center/cover;
+        }
+
+        .girl{
+            background:url('girl.png') center center/cover;
+        }
+        .boy{
+            background:url('boy.png') center center/cover;
+        }
+
+/* 選寶寶性別 */
+        .select{
+            text-align:center;
+            position:relative;
+            height:500px;
+            width:250px;
+            top:15%;
+            left:5%;
+        } 
+        .select h2{
+            text-decoration: underline;
+        }
+        #girlselect{
+            border-radius: 50%;
+            height:100px;
+            width:100px;
+            position:absolute;
+            left:10%;
+            background:url('girl.png') center center/cover;
+        }
+        #girlselect:hover{
+            cursor:pointer;
+            transform:scale(1.1);
+        }
+        #girlselect:active{
+            transform:scale(0.5);
+        }
+        #boyselect{
+            border-radius: 50%;
+            height:100px;
+            width:100px;
+            position:absolute;
+            top:30%;
+            left:50%;
+            background:url('boy.png') center center/cover;
+        }
+        #boyselect:hover{
+            cursor:pointer;
+            transform:scale(1.1);
+        }
+        #boyselect:active{
+            transform:scale(0.5);
+        }
+
+/* 計時，開始按鈕 */
+        .form{
+            font-family:'微軟正黑體';
+            font-size:2rem;
+            text-align:center;
+            line-height: 1rem;
+            position:absolute; 
+            height:250px;
+            width:250px;
+            bottom:0;
+            left:5%;
+        }
+       
+    </style>
+</head>
+<body>
+
+<div id="left">
+    <div class="select">
+        <h2>選擇寶寶性別</h2>
+        <div id="girlselect"> </div>
+        <div id="boyselect"></div>
+    </div>
+    <div class="form">
+        <br>
+        <br>
+        Score: <span id="text-score">0</span>
+        <br>
+       <br>
+        Timer: <span id="timeleft">10</span>
+</div>
+</div>
+
+<div class='box'>
+    <table id="game">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+
+</div>
+
+
+
+    <script>
+        // 先抓取所有東西
+        btnStart = document.getElementById('btn-start')
+        holes = document.querySelectorAll('#game td')
+        textScore = document.getElementById('text-score')
+        timeLeft = document.getElementById('timeleft')
+        btnGirl = document.getElementById('girlselect')
+        btnBoy = document.getElementById('boyselect')
+
+
+
+        let score = 0
+        let isInGame = false
+
+        let time = 0
+
+ // 選擇寶寶性別: 女
+     btnGirl.onclick= () =>{
+        //  停用開始鈕
+        btnGirl.disabled = true
+        btnBoy.disabled = true
+        // 重設一輪分數
+        score = 0
+        textScore.innerText = score
+        // 遊戲進行
+        isInGame = true
+        // 重設一輪時間
+        time = 10
+        timeLeft.innerHTML = time 
+         // 開始計時
+        timer = setInterval(game, 1000)
+        setTimeout(end, 10000)
+            
+        game()
+
+        for(const hole of holes){
+            hole.onclick = () =>{
+               if(hole.classList.contains('girlcry')){
+                   hole.classList.remove('girlcry')
+                   hole.classList.add('girl')
+
+                   score++
+                   textScore.innerText = score
+               }
+            }
+        } 
+        
+     }
+
+
+ // 遊戲進行中
+        const game = () =>{
+            // 倒數計時
+            time--
+            timeLeft.innerText = time
+            if(time==0){
+            timeLeft.innerText = '時間到'
+            }
+            // 清除格子的class屬性
+            for(const hole of holes){
+                hole.classList.remove('girlcry')
+                hole.classList.remove('girl')
+                hole.classList.remove('boycry')
+                hole.classList.remove('boy')
+            }
+
+
+            // 隨取四個出現
+            // 可是一開始跑出來的都是哭泣男寶寶...
+            for(let i=0;i<4;i++){
+                const random = Math.floor((Math.random()*16))
+                holes[random].classList.add('girlcry')
+                holes[random].classList.add('boycry')
+               
+            }
+            
+    
+
+        }
+
+
+// 遊戲結束時
+        const end = () =>{
+                clearInterval(timer)
+                timeLeft.innerText = '時間到'
+            
+            for(const hole of holes){
+                hole.classList.remove('girlcry')
+                hole.classList.remove('girl')
+                hole.classList.remove('boycry')
+                hole.classList.remove('boy')
+            }
+            
+            btnGirl.disabled = false
+            btnBoy.disabled = false
+            alert(`你餵了${score}個寶寶`)
+        }
+
+
+
+
+// -------------------------------------------------------------------------
+
+
+// 選擇寶寶性別: 男
+btnBoy.onclick= () =>{
+        //  停用開始鈕
+        btnGirl.disabled = true
+        btnBoy.disabled = true
+        // 重設一輪分數
+        score = 0
+        textScore.innerText = score
+        // 遊戲進行
+        isInGame = true
+        // 重設一輪時間
+        time = 10
+        timeLeft.innerHTML = time 
+         // 開始計時
+        timer = setInterval(game, 1000)
+        setTimeout(end, 10000)
+            
+        game()
+
+
+// 使用者用滑鼠
+for(const hole of holes){
+            hole.onclick = () =>{
+               if(hole.classList.contains('boycry')){
+                   hole.classList.remove('boycry')
+                   hole.classList.add('boy')
+
+                   score++
+                   textScore.innerText = score
+               }
+            }
+        } 
+     }
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
